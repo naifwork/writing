@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Coach Dashboard | لوحة مدرب الكتابة</title>
+  <!-- خط اليمامة (Alyamama) من خطوط جوجل -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Alyamama:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #05130e;
+      --card: rgba(11, 34, 26, 0.75);
+      --inner: rgba(6, 20, 15, 0.85);
+      --border: rgba(52, 211, 153, 0.22);
+      --border-strong: rgba(16, 185, 129, 0.5);
+      --text: #ecfdf5;
+      --muted: #94b8ac;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --glow: #34d399;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #06b6d4;
+      --purple: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Alyamama', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.14) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 40%);
+      background-attachment: fixed;
+      color: var(--text);
+      padding: 14px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .layout-wrapper {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 920px) {
+      .dashboard-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 { font-size: 1.2rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    h2 { font-size: 0.98rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    p.sub { font-size: 0.8rem; color: var(--muted); }
+
+    select, input[type="text"], input[type="number"], textarea {
+      background: var(--inner);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    option, optgroup {
+      background-color: #061a13 !important;
+      color: #ecfdf5 !important;
+    }
+
+    select:focus, input[type="text"]:focus, textarea:focus {
+      border-color: var(--glow);
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.25);
+    }
+
+    textarea {
+      width: 100%;
+      resize: vertical;
+      direction: ltr;
+      text-align: left;
+      line-height: 1.7;
+    }
+
+    .settings-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    button {
+      flex: 1;
+      min-width: 110px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      user-select: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-secondary {
+      background: rgba(16, 48, 37, 0.7);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: rgba(22, 66, 51, 0.9);
+      border-color: var(--glow);
+    }
+
+    .btn-gold {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fde68a;
+      border: 1px solid rgba(245, 158, 11, 0.45);
+    }
+    .btn-gold:hover { background: rgba(245, 158, 11, 0.35); }
+
+    .btn-sm {
+      padding: 4px 9px;
+      font-size: 0.76rem;
+      min-width: auto;
+      flex: none;
+    }
+
+    /* شريط الإحصائيات الحي للنص */
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      background: var(--inner);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--muted);
+    }
+    .stat-pill b {
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+
+    /* صينية تحدي الكلمات المستهدفة المستوردة */
+    .target-chips-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .target-chip {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      direction: ltr;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+    .target-chip.used {
+      background: rgba(52, 211, 153, 0.35);
+      border-color: var(--glow);
+      color: #ecfdf5;
+      text-decoration: line-through;
+      opacity: 0.75;
+    }
+
+    /* مسرح المراجعة والتعديلات */
+    .revision-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .revision-item {
+      background: var(--inner);
+      border: 1px solid var(--border);
+      border-right: 4px solid var(--glow);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+    .revision-item.rev-improved { border-right-color: #38bdf8; }
+    .revision-item.rev-error { border-right-color: #f87171; }
+
+    /* بطاقات المعايير الأكاديمية CEFR / IELTS */
+    .behavior-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+    .metric-card {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      line-height: 1.45;
+      border-right: 4px solid transparent;
+      background: var(--inner);
+    }
+    .metric-emerald { border-right-color: var(--accent); background: rgba(16, 185, 129, 0.08); }
+    .metric-teal { border-right-color: var(--info); background: rgba(6, 182, 212, 0.08); }
+    .metric-yellow { border-right-color: var(--warning); background: rgba(245, 158, 11, 0.08); }
+    .metric-purple { border-right-color: var(--purple); background: rgba(168, 85, 247, 0.08); }
+    .metric-card .title {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 1rem;
+      background: var(--inner);
+      border: 2px solid var(--glow);
+    }
+
+    .word-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--inner);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+    .word-badge:hover { border-color: var(--glow); }
+    .word-badge .del-btn { color: var(--muted); font-size: 0.9rem; padding: 0 2px; }
+    .word-badge .del-btn:hover { color: var(--danger); }
+
+    /* وضع التركيز الكامل (Zen Immersion Mode) */
+    #zenStage {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #030c08;
+      background-image:
+        radial-gradient(circle at 50% 15%, rgba(16, 185, 129, 0.16) 0%, transparent 65%),
+        radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.12) 0%, transparent 65%);
+      z-index: 99999;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout-wrapper">
+
+  <!-- رأس الصفحة ومحرك التدقيق السمعي -->
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div>
+        <h1>✍️ مدرب الكتابة التفاعلي (Writing Coach)</h1>
+        <p class="sub">استوديو كتابة إنجليزية متكامل، تدقيق سمعي بالمتصفح، تحدي المفردات، وتقييم بمعايير CEFR/IELTS.</p>
+      </div>
+
+      <div class="settings-row">
+        <label>الصوت للمراجعة:</label>
+        <select id="voiceSelect" style="max-width: 160px;"></select>
+
+        <label>السرعة:</label>
+        <input type="range" id="rateRange" min="0.6" max="1.3" step="0.05" value="0.9" style="width: 65px; accent-color: var(--accent);">
+        <span id="rateVal" style="color: var(--glow);">0.9x</span>
+
+        <button type="button" class="btn-secondary btn-sm" onclick="toggleZenMode(true)" style="border-color: var(--glow); color: #6ee7b7;">
+          🧘 وضع التركيز الكامل (Zen)
+        </button>
+        <button type="button" class="btn-secondary btn-sm" onclick="toggleHelpModal()" style="border-color: #f59e0b; color: #fde68a;">
+          💡 دليل استخدام المدرب
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- تقسيم الشاشة الرئيسي -->
+  <div class="dashboard-grid">
+
+    <!-- العمود الأول: استوديو ومحرر الكتابة -->
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+
+      <!-- إعدادات المهمة وموضوع الكتابة -->
+      <div class="card">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: var(--glow);">🎯 نوع وموضوع الكتابة:</label>
+          <select id="taskCategorySelect" onchange="handleTaskChange()" style="flex: 2; min-width: 220px;">
+            <optgroup label="📧 الرسائل والإيميلات (Emails & Letters)">
+              <option value="0">طلب وظيفة رسمي (Job Application Email)</option>
+              <option value="1">استفسار أكاديمي مهذب من أستاذ (Academic Inquiry)</option>
+              <option value="2">شكوى رسمية راقية لخدمة العملاء (Formal Complaint)</option>
+            </optgroup>
+            <optgroup label="📝 المقالات الأكاديمية ونقاش الرأي (Essays)">
+              <option value="3">مقال رأي: إيجابيات وسلبيات الذكاء الاصطناعي في التعليم</option>
+              <option value="4">مقال نقاشي: العمل عن بُعد مقابل العمل المكتبي</option>
+              <option value="5">مقال سردي: تجربة شخصية غيرت نظرتك للأمور</option>
+            </optgroup>
+            <optgroup label="🎓 اختبارات الآيلتس والـ CEFR">
+              <option value="6">IELTS Writing Task 2: Agree or Disagree Essay</option>
+            </optgroup>
+            <optgroup label="✨ خيار مخصص">
+              <option value="custom">✍️ موضوع حر تكتبه بنفسك...</option>
+            </optgroup>
+          </select>
+
+          <div style="display: inline-flex; align-items: center; gap: 4px; background: var(--inner); padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border);">
+            <label style="font-size: 0.75rem; color: #a7f3d0; font-weight: bold;">المستوى المستهدف:</label>
+            <select id="cefrTargetSelect" style="padding: 2px 4px; font-size: 0.75rem; border: none; font-weight: bold; color: #fff;">
+              <option value="A2">🌱 A2 - مبتدئ واثق</option>
+              <option value="B1" selected="">⚖️ B1 - متوسط قياسي</option>
+              <option value="B2">🚀 B2 - فوق المتوسط (احترافي)</option>
+              <option value="C1">💎 C1 - أكاديمي متقدم</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="missionPromptBanner" style="font-size: 0.82rem; color: var(--muted); background: var(--inner); padding: 8px 12px; border-radius: 8px; border-right: 3px solid var(--glow); margin-bottom: 8px;">
+          🎯 <b>المهمة:</b> اكتب إيميل تقديم رسمي على وظيفة، اذكر مؤهلاتك وخبراتك وسبب اهتمامك بالمنظمة.
+        </div>
+
+        <div id="customTopicInputWrapper" style="display: none; margin-bottom: 8px;">
+          <input type="text" id="customTopicInput" placeholder="اكتب عنوان أو سؤال المهمة الخاصة بك هنا بالتفصيل..." style="width: 100%;">
+        </div>
+
+        <!-- صينية تحدي دمج كلمات من معمل المفردات -->
+        <div style="background: var(--inner); border: 1px dashed var(--border); border-radius: 8px; padding: 8px 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+            <span style="font-size: 0.76rem; color: #a7f3d0; font-weight: bold;">🔬 تحدي توظيف المفردات (ألصق كلمات تريد إجبار نفسك على كتابتها):</span>
+            <button class="btn-secondary btn-sm" onclick="promptAddChallengeWords()" style="padding: 2px 8px; font-size: 0.7rem;">+ إضافة كلمات</button>
+          </div>
+          <div id="targetChipsContainer" class="target-chips-box">
+            <span style="font-size: 0.74rem; color: var(--muted);">لم يتم تعيين كلمات مستهدفة بعد.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- مساحة المحرر والكتابة -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+          <h2 style="margin: 0;">لوحة تحرير المقال والنص</h2>
+          <div style="display: flex; gap: 4px; align-items: center;">
+            <button class="btn-secondary btn-sm" onclick="adjustEditorFont(1)" title="تكبير الخط">A+</button>
+            <button class="btn-secondary btn-sm" onclick="adjustEditorFont(-1)" title="تصغير الخط">A-</button>
+            <button class="btn-secondary btn-sm" onclick="toggleProofreadSpeech()" id="proofreadSpeechBtn" style="border-color: var(--glow); color: #6ee7b7;" title="استمع لنصك المكتوب صوتياً لاكتشاف العثرات بالأذن!">
+              🎧 تدقيق سمعي
+            </button>
+            <button class="btn-secondary btn-sm" onclick="clearEditorText()" style="color: var(--danger);">مسح</button>
+          </div>
+        </div>
+
+        <textarea id="writingArea" oninput="handleWritingInput()" style="height: 240px; font-size: 1.05rem;" placeholder="Start writing your English essay, email, or paragraphs here... (ابدأ كتابة مقالك أو فقرتك بالإنجليزية هنا)..."></textarea>
+
+        <!-- شريط الإحصائيات الفوري -->
+        <div class="stats-bar" style="margin-top: 8px;">
+          <div class="stat-pill">الكلمات: <b id="statWords">0</b></div>
+          <div class="stat-pill">الجمل: <b id="statSentences">0</b></div>
+          <div class="stat-pill">الفقرات: <b id="statParagraphs">0</b></div>
+          <div class="stat-pill">متوسط الجملة: <b id="statAvgWordsPerSent">0</b> ك/ج</div>
+          <div class="stat-pill">وقت القراءة المقدر: <b id="statReadTime">0</b> دقيقة</div>
+        </div>
+
+        <!-- أزرار النسخ وإنشاء برومبت التقييم -->
+        <div class="btn-row">
+          <div style="display: inline-flex; align-items: center; gap: 4px; background: var(--inner); padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border);">
+            <label style="font-size: 0.75rem; color: var(--muted);">نمط التدقيق:</label>
+            <select id="strictnessSelect" style="padding: 2px 4px; font-size: 0.75rem; border: none;">
+              <option value="balanced" selected="">⚖️ متوازن وعملي</option>
+              <option value="strict">🔥 أكاديمي صارم (IELTS)</option>
+              <option value="native">💎 أسلوب متحدث أصلي (Native)</option>
+              <option value="encouraging">🌱 مشجع وبناء</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" style="flex: 2; padding: 10px;" onclick="copyEvaluationPrompt()">
+            📋 نسخ برومبت التقييم الشامل للذكاء الاصطناعي
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- العمود الثاني: التقييم والمراجعة وبنك التراكيب -->
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+
+      <!-- استيراد كود تقييم JSON -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <h2>📥 استيراد تقرير التقييم (JSON)</h2>
+          <button class="btn-secondary btn-sm" onclick="loadSampleEvaluation()" style="color: #fde68a;">✨ نموذج جاهز</button>
+        </div>
+        <p class="sub" style="margin-bottom: 6px;">ألصق كود JSON الناتج من الذكاء لعرض درجاتك وملاحظات الصياغة فوراً:</p>
+        <textarea id="jsonInput" style="height: 75px;" placeholder="{&quot;score&quot;: 8.0, &quot;rubric&quot;: {...}, &quot;sentence_reviews&quot;: [...]}"></textarea>
+        <div class="btn-row" style="margin-top: 6px;">
+          <button class="btn-primary" style="padding: 8px;" onclick="applyEvaluationJson()">🎯 اعتماد النتيجة واستعراض التقرير</button>
+        </div>
+      </div>
+
+      <!-- لوحة معايير الأداء والدرجة -->
+      <div class="card" id="evaluationDisplayCard" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2>معايير الكتابة الأكاديمية (Rubric)</h2>
+          <div id="scoreDisplay" class="score-badge">/ 10</div>
+        </div>
+
+        <div class="behavior-grid">
+          <div class="metric-card metric-emerald">
+            <div class="title">📐 سلامة القواعد والتراكيب (Grammar &amp; Accuracy)</div>
+            <div id="m_grammar" style="color: var(--muted); font-size: 0.8rem;">—</div>
+          </div>
+          <div class="metric-card metric-teal">
+            <div class="title">💎 ثراء وتنوع المفردات (Lexical Resource)</div>
+            <div id="m_vocab" style="color: var(--muted); font-size: 0.8rem;">—</div>
+          </div>
+          <div class="metric-card metric-yellow">
+            <div class="title">🔗 الترابط وأدوات الربط (Cohesion &amp; Flow)</div>
+            <div id="m_cohesion" style="color: var(--muted); font-size: 0.8rem;">—</div>
+          </div>
+          <div class="metric-card metric-purple">
+            <div class="title">💡 التوجيه الفوري والخلاصة (Key Takeaway)</div>
+            <div id="m_takeaway" style="color: var(--muted); font-size: 0.8rem;">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- مراجعة الجمل وتصحيحات المتحدث الأصلي (Sentence Revisions) -->
+      <div class="card" id="revisionsDisplayCard" style="display: none;">
+        <h2>🔍 مراجعة الجمل واقتراحات المتحدث الأصلي (Native Revisions)</h2>
+        <div id="revisionsContainer" class="revision-box"></div>
+      </div>
+
+      <!-- بنك التراكيب والعبارات الذهبية المحفوظة -->
+      <div class="card">
+        <h2>بنك التراكيب الذهبية المكتسبة</h2>
+        
+        <div style="margin-bottom: 10px;">
+          <div style="font-size: 0.8rem; font-weight: bold; color: var(--glow); margin-bottom: 4px;">🎯 تراكيب هذا المقال:</div>
+          <div id="currentSessionPhrases" style="direction: ltr; text-align: left; display: flex; flex-wrap: wrap; gap: 6px; min-height: 24px;">
+            <span style="color: var(--muted); font-size: 0.8rem; direction: rtl;">ستظهر هنا أفضل التراكيب بعد استيراد التقييم.</span>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <button class="btn-secondary btn-sm" onclick="toggleArchive()">📂 الأرشيف الدائم (<span id="archiveCount">0</span>)</button>
+            <button class="btn-secondary btn-sm" style="color: var(--danger);" onclick="clearArchive()">مسح السجل</button>
+          </div>
+          <div id="archiveContainer" style="display: none; direction: ltr; text-align: left; margin-top: 6px; flex-wrap: wrap; gap: 6px;"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer style="text-align: center; padding: 14px 0 6px; font-size: 0.8rem; color: var(--muted);">
+    Built with <span style="color: #f59e0b;">⚡</span> By: <span style="color: var(--glow); font-weight: 800;">Naif</span>
+  </footer>
+
+</div>
+
+<!-- وضع التركيز الكامل بملء الشاشة (Zen Mode) -->
+<div id="zenStage">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span style="font-size: 1.2rem;">🧘</span>
+      <span style="font-weight: 800; color: #fff;">وضع التركيز الهادئ للكتابة (Zen Mode)</span>
+      <span class="stat-pill" style="margin-right: 12px;">الكلمات: <b id="zenWordCount">0</b></span>
+    </div>
+    <button class="btn-secondary btn-sm" onclick="toggleZenMode(false)">✕ الخروج من وضع التركيز (Esc)</button>
+  </div>
+  <textarea id="zenWritingArea" oninput="syncZenToMain()" style="flex: 1; font-size: 1.25rem; background: transparent; border: none; padding: 10px; line-height: 1.8; color: #ecfdf5;" placeholder="Type with complete focus..."></textarea>
+</div>
+
+<!-- نافذة الدليل: كيف يعمل مدرب الكتابة؟ -->
+<div id="helpModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(5px); z-index:10001; align-items:center; justify-content:center; padding:14px;" onclick="if(event.target===this) toggleHelpModal()">
+  <div style="background:#08221a; border:1px solid var(--glow); border-radius:12px; width:100%; max-width:540px; overflow:hidden; display:flex; flex-direction:column; max-height:88vh;">
+    <div style="background:#0d3327; padding:10px 14px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-weight:800; color:#fff; font-size:0.95rem;">💡 كيف تحقق أقصى استفادة من مدرب الكتابة؟</span>
+      <button class="btn-secondary btn-sm" onclick="toggleHelpModal()">✕</button>
+    </div>
+    <div style="padding:14px; overflow-y:auto; font-size:0.83rem; line-height:1.65; display:flex; flex-direction:column; gap:8px;">
+      <div style="background:var(--inner); padding:8px 10px; border-radius:8px; border-right:3px solid var(--glow);">
+        <b>1. اختر المهمة وحدد المفردات:</b> اختر نوع النص أو اكتب موضوعك، وأضف كلمات من «معمل المفردات» لتتحدى نفسك بتضمينها في سياق حقيقي.
+      </div>
+      <div style="background:var(--inner); padding:8px 10px; border-radius:8px; border-right:3px solid var(--info);">
+        <b>2. استفد من التدقيق السمعي (Proofread by Ear):</b> بعد الانتهاء من المسودة، اضغط زر التدقيق السمعي؛ سماع النص بأصوات المتصفح الطبيعية يساعدك في التقاط الأخطاء الانسيابية التي تغفل عنها العين!
+      </div>
+      <div style="background:var(--inner); padding:8px 10px; border-radius:8px; border-right:3px solid var(--warning);">
+        <b>3. قيّم كتابتك بالذكاء الاصطناعي:</b> اضغط (نسخ برومبت التقييم) وألصقه في الشات، ثم انسخ كود الـ JSON الناتج وضعه في خانة الاستيراد للحصول على تحليل تفصيلي وبدائل المتحدث الأصلي.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TASKS = [
+    {
+      id: "job_email",
+      title: "طلب وظيفة رسمي (Job Application Email)",
+      mission: "اكتب إيميل تقديم رسمي على وظيفة، اذكر مؤهلاتك وخبراتك وسبب اهتمامك بالمنظمة وما يميزك."
+    },
+    {
+      id: "prof_inquiry",
+      title: "استفسار أكاديمي مهذب من أستاذ (Academic Inquiry)",
+      mission: "اكتب رسالة بريد إلكتروني رسمية لأستاذ المادة تسأله فيها عن توضيح نقطة معينة وتطلب موعداً استشارياً."
+    },
+    {
+      id: "complaint",
+      title: "شكوى رسمية راقية لخدمة العملاء (Formal Complaint)",
+      mission: "اشرح مشكلة واجهتها في منتج أو خدمة بطريقة احترافية ومهذبة، واطلب حلاً عادلاً أو تعويضاً مناسباً."
+    },
+    {
+      id: "ai_essay",
+      title: "مقال رأي: إيجابيات وسلبيات الذكاء الاصطناعي في التعليم",
+      mission: "ناقش دور الذكاء الاصطناعي في الفصول الدراسية وتأثيره على تفكير الطلاب مع ضرب أمثلة من الواقع."
+    },
+    {
+      id: "remote_work",
+      title: "مقال نقاشي: العمل عن بُعد مقابل العمل المكتبي",
+      mission: "قارن بين الإنتاجية في العمل من المنزل والعمل من المكتب مع توضيح رأيك المدعوم بالحجج المنطقية."
+    },
+    {
+      id: "personal_growth",
+      title: "مقال سردي: تجربة شخصية غيرت نظرتك للأمور",
+      mission: "اسرد موقفاً واقعياً أو تحدياً واجهته وكيف ساهم في تطوير مهاراتك أو بناء وعيك الذاتي."
+    },
+    {
+      id: "ielts_task2",
+      title: "IELTS Writing Task 2: Agree or Disagree Essay",
+      mission: "Some people believe that technology makes human communication less personal. To what extent do you agree or disagree? Give reasons and examples."
+    }
+  ];
+
+  let currentFontRem = 1.05;
+  let availableVoices = [];
+  let isSpeaking = false;
+  let targetChallengeWords = [];
+
+  window.addEventListener('DOMContentLoaded', () => {
+    populateVoices();
+    renderArchiveBank();
+  });
+
+  function populateVoices() {
+    if (!('speechSynthesis' in window)) return;
+    const all = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+    all.sort((a, b) => {
+      const aNat = a.name.includes('Natural') || a.name.includes('Online');
+      const bNat = b.name.includes('Natural') || b.name.includes('Online');
+      return (bNat ? 1 : 0) - (aNat ? 1 : 0);
+    });
+    availableVoices = all;
+    const sel = document.getElementById('voiceSelect');
+    sel.innerHTML = '';
+    availableVoices.forEach((v, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      const isNat = v.name.includes('Natural') || v.name.includes('Online');
+      opt.textContent = `${isNat ? '⭐ ' : ''}${v.name} (${v.lang})`;
+      sel.appendChild(opt);
+    });
+  }
+
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+  }
+
+  document.getElementById('rateRange').addEventListener('input', (e) => {
+    document.getElementById('rateVal').textContent = `${e.target.value}x`;
+  });
+
+  function handleTaskChange() {
+    const val = document.getElementById('taskCategorySelect').value;
+    const customWrap = document.getElementById('customTopicInputWrapper');
+    const banner = document.getElementById('missionPromptBanner');
+
+    if (val === 'custom') {
+      customWrap.style.display = 'block';
+      banner.innerHTML = `🎯 <b>المهمة:</b> اكتب موضوعك المخصص في الحقل أدناه وابدأ بصياغة مسودتك بحرية.`;
+    } else {
+      customWrap.style.display = 'none';
+      const task = TASKS[parseInt(val, 10)];
+      if (task) {
+        banner.innerHTML = `🎯 <b>المهمة:</b> ${task.mission}`;
+      }
+    }
+  }
+
+  function handleWritingInput() {
+    const text = document.getElementById('writingArea').value;
+    updateStats(text);
+    checkTargetWordsUsage(text);
+  }
+
+  function updateStats(text) {
+    const words = text.trim() ? text.trim().split(/\s+/).filter(Boolean) : [];
+    const sentences = text.trim() ? text.split(/[.!?]+/).filter(s => s.trim().length > 0) : [];
+    const paragraphs = text.trim() ? text.split(/\n+/).filter(p => p.trim().length > 0) : [];
+
+    const wordCount = words.length;
+    const sentenceCount = sentences.length;
+    const paragraphCount = paragraphs.length;
+    const avgWordsPerSent = sentenceCount > 0 ? (wordCount / sentenceCount).toFixed(1) : 0;
+    const estTime = (wordCount / 130).toFixed(1);
+
+    document.getElementById('statWords').textContent = wordCount;
+    document.getElementById('statSentences').textContent = sentenceCount;
+    document.getElementById('statParagraphs').textContent = paragraphCount;
+    document.getElementById('statAvgWordsPerSent').textContent = avgWordsPerSent;
+    document.getElementById('statReadTime').textContent = estTime;
+
+    const zenWord = document.getElementById('zenWordCount');
+    if (zenWord) zenWord.textContent = wordCount;
+  }
+
+  function adjustEditorFont(delta) {
+    currentFontRem = Math.max(0.85, Math.min(1.7, currentFontRem + (delta * 0.1)));
+    document.getElementById('writingArea').style.fontSize = `${currentFontRem}rem`;
+  }
+
+  function clearEditorText() {
+    if (confirm('هل أنت متأكد من رغبتك في مسح النص المكتوب؟')) {
+      document.getElementById('writingArea').value = '';
+      handleWritingInput();
+    }
+  }
+
+  // ميزة إضافة كلمات تحدي من معمل المفردات
+  function promptAddChallengeWords() {
+    const raw = prompt('أدخل الكلمات التي تريد تضمينها في مقالك (مفصولة بفواصل أو مسافات):', 'characteristics, subtle, however');
+    if (!raw) return;
+    const list = raw.split(/[,;\n\s]+/).map(w => w.trim().toLowerCase().replace(/[^a-z]/g, '')).filter(Boolean);
+    targetChallengeWords = Array.from(new Set([...targetChallengeWords, ...list]));
+    renderChallengeChips();
+    checkTargetWordsUsage(document.getElementById('writingArea').value);
+  }
+
+  function renderChallengeChips() {
+    const c = document.getElementById('targetChipsContainer');
+    if (!targetChallengeWords.length) {
+      c.innerHTML = '<span style="font-size: 0.74rem; color: var(--muted);">لم يتم تعيين كلمات مستهدفة بعد.</span>';
+      return;
+    }
+    c.innerHTML = targetChallengeWords.map((w, idx) => `
+      <span class="target-chip" id="t_chip_${idx}">
+        ${w}
+        <span onclick="removeChallengeWord(${idx})" style="cursor:pointer; color:var(--muted); font-weight:bold; margin-left:3px;">×</span>
+      </span>
+    `).join('');
+  }
+
+  function removeChallengeWord(idx) {
+    targetChallengeWords.splice(idx, 1);
+    renderChallengeChips();
+    checkTargetWordsUsage(document.getElementById('writingArea').value);
+  }
+
+  function checkTargetWordsUsage(text) {
+    const cleanLower = text.toLowerCase();
+    targetChallengeWords.forEach((w, idx) => {
+      const chip = document.getElementById(`t_chip_${idx}`);
+      if (!chip) return;
+      const regex = new RegExp(`\\b${w}\\b`, 'i');
+      if (regex.test(cleanLower)) {
+        chip.classList.add('used');
+      } else {
+        chip.classList.remove('used');
+      }
+    });
+  }
+
+  // ميزة التدقيق السمعي (Proofread by Ear)
+  function toggleProofreadSpeech() {
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      isSpeaking = false;
+      document.getElementById('proofreadSpeechBtn').textContent = '🎧 تدقيق سمعي';
+      return;
+    }
+
+    const text = document.getElementById('writingArea').value.trim();
+    if (!text) {
+      alert('يرجى كتابة نص أولاً للاستماع إليه.');
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    const sel = document.getElementById('voiceSelect');
+    if (availableVoices[sel?.value]) utter.voice = availableVoices[sel.value];
+    utter.rate = parseFloat(document.getElementById('rateRange').value) || 0.9;
+
+    utter.onstart = () => {
+      isSpeaking = true;
+      document.getElementById('proofreadSpeechBtn').textContent = '⏹️ إيقاف القراءة';
+    };
+    utter.onend = () => {
+      isSpeaking = false;
+      document.getElementById('proofreadSpeechBtn').textContent = '🎧 تدقيق سمعي';
+    };
+    utter.onerror = () => {
+      isSpeaking = false;
+      document.getElementById('proofreadSpeechBtn').textContent = '🎧 تدقيق سمعي';
+    };
+
+    window.speechSynthesis.speak(utter);
+  }
+
+  function speakText(txt) {
+    if (!('speechSynthesis' in window) || !txt) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(txt);
+    const sel = document.getElementById('voiceSelect');
+    if (availableVoices[sel?.value]) utter.voice = availableVoices[sel.value];
+    utter.rate = parseFloat(document.getElementById('rateRange').value) || 0.9;
+    window.speechSynthesis.speak(utter);
+  }
+
+  // وضع التركيز الكامل (Zen Mode)
+  function toggleZenMode(show) {
+    const z = document.getElementById('zenStage');
+    const mainText = document.getElementById('writingArea');
+    const zenText = document.getElementById('zenWritingArea');
+
+    if (show) {
+      zenText.value = mainText.value;
+      z.style.display = 'flex';
+      zenText.focus();
+    } else {
+      mainText.value = zenText.value;
+      z.style.display = 'none';
+      handleWritingInput();
+    }
+  }
+
+  function syncZenToMain() {
+    const zVal = document.getElementById('zenWritingArea').value;
+    document.getElementById('writingArea').value = zVal;
+    updateStats(zVal);
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const z = document.getElementById('zenStage');
+      if (z && z.style.display === 'flex') toggleZenMode(false);
+    }
+  });
+
+  function toggleHelpModal() {
+    const m = document.getElementById('helpModal');
+    m.style.display = (m.style.display === 'none' || m.style.display === '') ? 'flex' : 'none';
+  }
+
+  // بناء ونسخ برومبت التقييم
+  function copyEvaluationPrompt() {
+    const text = document.getElementById('writingArea').value.trim();
+    if (!text) {
+      alert('يرجى كتابة مقالك أو فقرتك أولاً.');
+      return;
+    }
+
+    const taskVal = document.getElementById('taskCategorySelect').value;
+    let topicName = "General Essay / Writing Practice";
+    if (taskVal === 'custom') {
+      topicName = document.getElementById('customTopicInput')?.value.trim() || 'Custom Writing Task';
+    } else {
+      topicName = TASKS[parseInt(taskVal, 10)]?.title || topicName;
+    }
+
+    const cefr = document.getElementById('cefrTargetSelect').value;
+    const strictness = document.getElementById('strictnessSelect').value;
+
+    const strictnessInstructions = {
+      balanced: "قيّم النص بأسلوب عملي متوازن يجمع بين تصحيح القواعد، اقتراح تنويع في المفردات، وتلميع الروابط بين الجمل.",
+      strict: "قيّم النص بصرامة أكاديمية عالية تشبه معايير مصححي الـ IELTS Writing الرسمية دون مجاملة، مع التدقيق في أدوات الربط، ثراء المعجم، وتطابق زمن الأفعال.",
+      native: "ركز كمدرب صياغة أصلي (Native Writing Coach) على تحويل الجمل المكتوبة بالإنجليزية المباشرة إلى تعبيرات طبيعية ومحترفة يستخدمها الكاتب الأصلي (Stylistic Flow).",
+      encouraging: "قيّم النص بأسلوب تعليمي مشجع جداً ومرن يعزز الثقة في التعبير، مع التركيز على أهم خطأين فقط لتفاديهما مستقبلاً."
+    };
+
+    const prompt = `أنت خبير معتمد في تدريس وتصحيح الكتابة باللغة الإنجليزية وفق معايير CEFR و IELTS Writing.
+${strictnessInstructions[strictness]}
+
+معلومات المهمة:
+- عنوان أو سياق المهمة: "${topicName}"
+- المستوى المستهدف: (${cefr})
+
+النص المكتوب من قِبل المتعلم:
+"""
+${text}
+"""
+
+المطلوب: حلل النص بدقة وقدم التقييم فقط داخل كود JSON صالح تماماً وبدون أي شروحات أو مقدمات خارجه، مع منع كتابة أي تعليقات // داخل الكود:
+{
+  "score": 8.0,
+  "rubric": {
+    "grammar": "ملاحظات تفصيلية حول تراكيب الجمل والأزمنة وسلامتها",
+    "vocab": "ملاحظات حول تنوع المفردات والكلمات المتقدمة المستخدمة",
+    "cohesion": "ملاحظات حول ترابط الفقرات وأدوات الربط (Cohesive Devices)",
+    "takeaway": "خلاصة عملية في سطرين لأبرز نقطة قوة وأهم نصيحة للتحسين"
+  },
+  "sentence_reviews": [
+    {
+      "original": "الجملة كما كتبها المتعلم",
+      "type": "grammar_error أو stylistic_enhancement أو well_written",
+      "corrected": "الصياغة الصحيحة قواعدياً",
+      "native_polish": "كيف يصيغها الكاتب الأصلي برقي وانسيابية",
+      "note_ar": "شرح توجيهي موجز بالعربية حول سبب التعديل"
+    }
+  ],
+  "golden_phrases": [
+    "تعبير أو أداة ربط أو تركيب احترافي ورد في التصحيحات ويستحق الحفظ"
+  ]
+}`;
+
+    navigator.clipboard.writeText(prompt).then(() => {
+      alert('تم نسخ برومبت التقييم بنجاح! 📋\n\n1. الصقه في شات الذكاء الاصطناعي (ChatGPT أو Gemini).\n2. انسخ كود الـ JSON الناتج وضعه في خانة (استيراد تقرير التقييم) بالأسفل.');
+    }).catch(() => {
+      prompt('انسخ البرومبت يدوياً:', prompt);
+    });
+  }
+
+  // تطبيق كود الـ JSON وتوليد التقرير الملون
+  function applyEvaluationJson() {
+    let raw = document.getElementById('jsonInput').value.trim();
+    if (!raw) {
+      alert('يرجى لصق كود الـ JSON أولاً.');
+      return;
+    }
+    raw = raw.replace(/```json|```/gi, '').replace(/\/\/.*$/gm, '').trim();
+
+    try {
+      const data = JSON.parse(raw);
+
+      document.getElementById('evaluationDisplayCard').style.display = 'block';
+      document.getElementById('revisionsDisplayCard').style.display = 'block';
+
+      // النتيجة الإجمالية
+      const badge = document.getElementById('scoreDisplay');
+      badge.textContent = `${data.score} / 10`;
+      badge.style.borderColor = data.score >= 8 ? 'var(--success)' : (data.score >= 5 ? 'var(--warning)' : 'var(--danger)');
+
+      // تفاصيل المعايير
+      if (data.rubric) {
+        document.getElementById('m_grammar').textContent = data.rubric.grammar || '—';
+        document.getElementById('m_vocab').textContent = data.rubric.vocab || '—';
+        document.getElementById('m_cohesion').textContent = data.rubric.cohesion || '—';
+        document.getElementById('m_takeaway').textContent = data.rubric.takeaway || '—';
+      }
+
+      // مراجعة الجمل وتصحيحات المتحدث الأصلي
+      const revBox = document.getElementById('revisionsContainer');
+      revBox.innerHTML = '';
+
+      (data.sentence_reviews || []).forEach((item, idx) => {
+        let borderClass = 'rev-improved';
+        let badgeTitle = '✨ تحسين أسلوبي';
+        if (item.type === 'grammar_error') {
+          borderClass = 'rev-error';
+          badgeTitle = '⚠️ تصحيح نحوي';
+        } else if (item.type === 'well_written') {
+          badgeTitle = '🎉 صياغة متقنة';
+        }
+
+        const safeNative = (item.native_polish || item.corrected || '').replace(/'/g, "\\'");
+
+        revBox.insertAdjacentHTML('beforeend', `
+          <div class="revision-item ${borderClass}">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span style="font-weight: bold; color: #fff; font-size: 0.8rem;">الجملة (${idx + 1}): ${badgeTitle}</span>
+              <button class="btn-secondary btn-sm" onclick="speakText('${safeNative}')" style="padding: 2px 8px; font-size: 0.72rem;">🔊 استمع للصياغة</button>
+            </div>
+            <div style="direction: ltr; text-align: left; color: #fca5a5; margin-bottom: 4px;">
+              <span style="color: var(--muted); font-size: 0.75rem;">مسودتك:</span> "${item.original}"
+            </div>
+            ${item.corrected ? `
+              <div style="direction: ltr; text-align: left; color: #86efac; margin-bottom: 4px;">
+                <span style="color: var(--muted); font-size: 0.75rem;">التصحيح:</span> ${item.corrected}
+              </div>
+            ` : ''}
+            ${item.native_polish ? `
+              <div style="direction: ltr; text-align: left; color: #67e8f9; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; margin-bottom: 4px;">
+                <span style="color: #fde68a; font-weight: bold; font-size: 0.75rem;">Native:</span> ${item.native_polish}
+              </div>
+            ` : ''}
+            <div style="font-size: 0.8rem; color: #d1fae5;">
+              💡 <b>الملاحظة:</b> ${item.note_ar || ''}
+            </div>
+          </div>
+        `);
+      });
+
+      // بنك التراكيب
+      const phrases = data.golden_phrases || [];
+      renderSessionPhrases(phrases);
+
+      let archive = JSON.parse(localStorage.getItem('writing_archive_bank') || '[]');
+      phrases.forEach(p => {
+        if (p && !archive.includes(p)) archive.push(p);
+      });
+      localStorage.setItem('writing_archive_bank', JSON.stringify(archive));
+      renderArchiveBank();
+
+      document.getElementById('evaluationDisplayCard').scrollIntoView({ behavior: 'smooth' });
+
+    } catch (e) {
+      alert('حدث خطأ في قراءة كود الـ JSON، تأكد من نسخه كاملاً.');
+    }
+  }
+
+  function loadSampleEvaluation() {
+    const sample = {
+      score: 8.5,
+      rubric: {
+        grammar: "تراكيب الجمل قوية ومنوعة، مع تحكم ممتاز في أزمنة المضارع التام.",
+        vocab: "توظيف موفق لمفردات مهنية مثل (demonstrate, track record, collaboration).",
+        cohesion: "استخدام رشيق لأدوات الربط (Furthermore, Consequently) دون تكلف.",
+        takeaway: "كتابة واثقة ومباشرة؛ حافظ على هذا الإيقاع وركز دائماً على وضوح الروابط بين الأفكار الرئيسية."
+      },
+      sentence_reviews: [
+        {
+          original: "I am writing this email because I want to apply for the teaching position.",
+          type: "stylistic_enhancement",
+          corrected: "I am writing to formally submit my application for the teaching position.",
+          native_polish: "I am writing to express my strong interest in the teaching position currently available.",
+          note_ar: "البدء بـ (express my strong interest) أكثر احترافية وأناقة في المراسلات الرسمية."
+        },
+        {
+          original: "I have worked in education since five years.",
+          type: "grammar_error",
+          corrected: "I have worked in education for five years.",
+          native_polish: "With over five years of hands-on experience in education...",
+          note_ar: "نستخدم (for) مع المدد الزمنية الممتدة، بينما (since) تُستخدم مع نقطة بداية محددة."
+        }
+      ],
+      golden_phrases: [
+        "I am writing to express my strong interest in...",
+        "With over five years of hands-on experience in...",
+        "I would welcome the opportunity to further discuss..."
+      ]
+    };
+    document.getElementById('jsonInput').value = JSON.stringify(sample, null, 2);
+    applyEvaluationJson();
+  }
+
+  function renderSessionPhrases(items) {
+    const box = document.getElementById('currentSessionPhrases');
+    if (!items || !items.length) {
+      box.innerHTML = '<span style="color: var(--glow); font-size: 0.8rem;">🎉 تراكيبك الحالية ممتازة!</span>';
+      return;
+    }
+    box.innerHTML = items.map(w => {
+      const safe = w.replace(/'/g, "\\'");
+      return `<span class="word-badge" onclick="speakText('${safe}')">🔊 ${w}</span>`;
+    }).join('');
+  }
+
+  function renderArchiveBank() {
+    const box = document.getElementById('archiveContainer');
+    const count = document.getElementById('archiveCount');
+    let items = JSON.parse(localStorage.getItem('writing_archive_bank') || '[]');
+    count.textContent = items.length;
+
+    if (!items.length) {
+      box.innerHTML = '<span style="color: var(--muted); font-size: 0.8rem;">الأرشيف فارغ.</span>';
+      return;
+    }
+
+    box.innerHTML = items.map((w, i) => {
+      const safe = w.replace(/'/g, "\\'");
+      return `
+        <span class="word-badge">
+          <span onclick="speakText('${safe}')">🔊 ${w}</span>
+          <span class="del-btn" onclick="deleteArchiveItem(${i})" title="حذف">&times;</span>
+        </span>
+      `;
+    }).join('');
+  }
+
+  function deleteArchiveItem(idx) {
+    let items = JSON.parse(localStorage.getItem('writing_archive_bank') || '[]');
+    items.splice(idx, 1);
+    localStorage.setItem('writing_archive_bank', JSON.stringify(items));
+    renderArchiveBank();
+  }
+
+  function clearArchive() {
+    if (confirm('هل أنت متأكد من مسح جميع التراكيب المحفوظة؟')) {
+      localStorage.removeItem('writing_archive_bank');
+      renderArchiveBank();
+    }
+  }
+
+  function toggleArchive() {
+    const c = document.getElementById('archiveContainer');
+    c.style.display = (c.style.display === 'none' || c.style.display === '') ? 'flex' : 'none';
+  }
+</script>
+
+</body>
+</html>
